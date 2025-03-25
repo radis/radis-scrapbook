@@ -15,7 +15,6 @@ fname = fpath + '02_HITEMP2024.par.bz2'
 sname = 'db/db_subset.txt'
 
 offsets, pads = np.load('offset_arr.npy')
-sizes = offsets[1:] - offsets[:-1]
 
 header = b'BZh91AY&SY'
 pad_bufs = [
@@ -33,18 +32,16 @@ pad_bufs = [
 # Read blocks:
 with open(fname, 'rb') as fr:
     fr.seek(offsets[i_min])
-    buf = fr.read(offsets[i_max + 1] - offsets[i_min] + 10)
+    buf = fr.read(offsets[i_max + 1] - offsets[i_min])
 
 # Decompress blocks:
-with open(sname, 'wb') as fw:
-    
-    # write alignment block:
-    decomp = bz2.BZ2Decompressor()
-    decomp.decompress(header + pad_bufs[pads[i_min]])
-            
-    # write data block:
-    data = decomp.decompress(buf)
-    fw.write(data)
-    decomp = None
+decomp = bz2.BZ2Decompressor()
+decomp.decompress(header + pad_bufs[pads[i_min]])
+data = decomp.decompress(buf)
+decomp = None
 
+# Write data:       
+with open(sname, 'wb') as fw:
+    fw.write(data)
+    
 print('Done!')

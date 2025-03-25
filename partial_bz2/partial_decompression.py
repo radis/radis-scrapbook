@@ -48,8 +48,8 @@ with open(fname, 'rb') as fr, open(sname, 'wb') as fw:
         data = decomp.decompress(buf)
         fw.write(data)
 
-    # Append the header of the next block to trigger decompression of the last block:
-    buf = fr.read(10)
+    # Append a byte to trigger decompression of the previous block:
+    buf = fr.read(1)
     data = decomp.decompress(buf)
     fw.write(data)
     

@@ -72,7 +72,7 @@ class StreamCRC:
 
 crc_obj = StreamCRC()
 with open(fname, 'rb') as fr:
-    for i in [0, 1, 2, N//2-1, N//2, N//2+1, N-3, N-2, N-1]:
+    for i in [0, 1, 2, 3, N//2-1, N//2, N//2+1, N-3, N-2, N-1]:
         with open(sname_i.format(i), 'wb') as fw:
             print(i, offsets[i], pads[i])
             

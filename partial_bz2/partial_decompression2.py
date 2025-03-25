@@ -9,7 +9,7 @@ import numpy as np
 from mypath import fpath
 import bz2
 
-i_range = [1,2,3]
+i_min, i_max = 1, 3
 
 fname = fpath + '02_HITEMP2024.par.bz2'
 sname = 'db/db_subset.txt'
@@ -17,8 +17,7 @@ sname = 'db/db_subset.txt'
 offsets, pads = np.load('offset_arr.npy')
 sizes = offsets[1:] - offsets[:-1]
 
-stream_header = b'BZh9'
-block_magic = b'1AY&SY'
+header = b'BZh91AY&SY'
 pad_bufs = [
 	b' Q\xb2\x1c\x00\x00\x03Z\x00\x00\x10\x0c\x00@\x00\x00\n \x000\xc0\x084\xf2 b\xfd',
 	b'\x89\xbf\xa3\xf5\x00\x00\x03Z\x00\x00\x10\x0e\x00 \x00\x00\n \x001\x0c\x01\x06\x99\xa1?\x19\n',
@@ -31,26 +30,21 @@ pad_bufs = [
     ]
 
 
-decomp = bz2.BZ2Decompressor()
-init = None
-with open(fname, 'rb') as fr, open(sname, 'wb') as fw:
-    for i in i_range:
+# Read blocks:
+with open(fname, 'rb') as fr:
+    fr.seek(offsets[i_min])
+    buf = fr.read(offsets[i_max + 1] - offsets[i_min] + 10)
 
-        print(i, offsets[i], pads[i])
-        
-        # write alignment block:
-        if init is None:
-            init = decomp.decompress(stream_header + block_magic + pad_bufs[pads[i]])
-            fr.seek(offsets[i])
-
-        # write data block:
-        buf = fr.read(sizes[i])
-        data = decomp.decompress(buf)
-        fw.write(data)
-
-    # Append the header of the next block to trigger decompression of the last block:
-    buf = fr.read(10)
+# Decompress blocks:
+with open(sname, 'wb') as fw:
+    
+    # write alignment block:
+    decomp = bz2.BZ2Decompressor()
+    decomp.decompress(header + pad_bufs[pads[i_min]])
+            
+    # write data block:
     data = decomp.decompress(buf)
     fw.write(data)
-    
+    decomp = None
+
 print('Done!')

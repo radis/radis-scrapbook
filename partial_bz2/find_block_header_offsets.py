@@ -126,7 +126,7 @@ for pad in range(8):
     
     # Add entry for the end of the last block:
     if pad == pad_end:
-        offset_list.append(last_offset)
+        offset_list.append(last_offset+1)
         
     # Accumulate blocks:
     headers += offset_list

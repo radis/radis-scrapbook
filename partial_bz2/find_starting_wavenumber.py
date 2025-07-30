@@ -65,9 +65,7 @@ for i in range(len(offsets)-1):
     wn_arr[i] = wn
 
 
-# we still have to look up the last wavenumber at the end, but for the moment, let's forget about it    
-# the problem is we can't just append the header, cause then bz2 will realize the stream doesnt match the CRC.
-# So we should add more fake data, but have to determine the bitshift. We can do this by looking at the footer bytes. 
+#TODO: Deal with last wavenumber
 
 np.save('wavenumber_arr.npy', wn_arr)
     

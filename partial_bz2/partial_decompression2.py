@@ -10,9 +10,13 @@ from bits_and_bytes import offsets, pad_bufs
 from mypath import fpath, my_email, my_password
 from hitemp_download import get_bz2
 
-i_min = 0
-i_max = 20
-# i_min, i_max = 0, 9
+# i_min = 0
+# i_max = 20
+
+i_min = len(offsets) - 2
+i_max = len(offsets) - 2
+
+
 sname = f'db/db_subset_{i_min:d}_{i_max:d}_.txt'
 remote = True
 
